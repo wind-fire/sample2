@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
@@ -17,7 +18,7 @@ class UsersController extends Controller
     {
 
         $this->middleware('auth',[
-            'except'=>['show','create','store','index']
+            'except'=>['show','create','store','index','confirmEmail']
         ]);
 
         /*引入中间件，注册页面只允许未登录用户访问*/
@@ -73,14 +74,39 @@ class UsersController extends Controller
 
 
         ]);
+
         /*注册后自动登录*/
-        Auth::login($user);
-        session()->flash('success','欢迎，您将在这里开启一段新的旅程~');
+        /*Auth::login($user);
+        session()->flash('success','欢迎，您将在这里开启一段新的旅程~');*/
         /*这里是一个『约定优于配置』的体现，此时 $user 是 User 模型对象的实例。route() 方法会自动获取 Model 的主键，也就是数据表 users 的主键 id，以上代码等同于：
 
         redirect()->route('users.show', [$user->id]);*/
 
-        return redirect()->route('users.show',[$user]);
+        /*return redirect()->route('users.show',[$user]);*/
+
+        /*注册成功后发送注册确认邮件*/
+        $this->sendEmailConfirmationTo($user);
+        session()->flash('success','验证邮件已发送到您注册的邮箱，请注意查收');
+        redirect('/');
+
+    }
+
+    /*注册成功后，发送注册确认邮件*/
+    protected function sendEmailConfirmationTo($user)
+    {
+        $view = 'emails.confirm';
+        $data = compact('user');
+        $from = 'fire@fire.com';
+        $name = 'Fire';
+        $to = $user->email;
+        $subject="感谢注册 Sample 应用！请确认您的邮箱";
+
+        Mail::send($view,$data,function ($message) use ($from,$name,$to,$subject){
+            $message->from($from,$name)->to($to)->subject($subject);
+        }
+
+        );
+
     }
 
     /*更新用户信息*/
@@ -113,6 +139,20 @@ class UsersController extends Controller
         session()->flash('success','成功删除用户');
         return back();
 
+    }
+
+    /*确认注册邮件*/
+    public function confirmEmail($token)
+    {
+        $user = User::where('activation_token',$token)->firstOrFail();
+        $user->activated = true;
+        $user->activation_token = null;
+
+        $user->save();
+
+        Auth::login($user);
+        session()->flash('success','恭喜你，激活成功');
+        return redirect()->route('users.show',[$user]);
     }
 
 
