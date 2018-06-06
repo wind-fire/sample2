@@ -87,7 +87,7 @@ class UsersController extends Controller
         /*注册成功后发送注册确认邮件*/
         $this->sendEmailConfirmationTo($user);
         session()->flash('success','验证邮件已发送到您注册的邮箱，请注意查收');
-        redirect('/');
+        return redirect('/');
 
     }
 
