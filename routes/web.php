@@ -47,6 +47,16 @@ Route::delete('logout','SessionsController@destroy')->name('logout');
 /*激活账户,邮箱链接*/
 Route::get('signup/confirm/{token}','UsersController@confirmEmail')->name('confirm_email');
 
+/*找回密码*/
+//显示输入邮箱找回密码界面
+Route::get('password/reset','AUTH\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+//服务器邮箱向用户邮箱发送重设密码链接
+Route::post('password/email','AUTH\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+//用户点击重设密码链接，服务器返回重设密码界面
+Route::get('password/reset/{token}','AUTH\ResetPasswordController@showResetForm')->name('password.reset');
+//用户执行更新操作，提交用户更新数据
+Route::post('password/reset','AUTH\ResetPasswordController@reset')->name('password.update');
+
 
 
 

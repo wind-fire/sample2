@@ -66,7 +66,8 @@ return [
             'prefix' => '',
             'schema' => 'public',
             'sslmode' => 'prefer',
-        ],*/
+        ],
+        */
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => $db_config['host'],
@@ -79,7 +80,6 @@ return [
             'schema'   => 'public',
             'sslmode'  => 'prefer',
         ],
-
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
