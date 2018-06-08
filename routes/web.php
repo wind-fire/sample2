@@ -57,6 +57,9 @@ Route::get('password/reset/{token}','AUTH\ResetPasswordController@showResetForm'
 //用户执行更新操作，提交用户更新数据
 Route::post('password/reset','AUTH\ResetPasswordController@reset')->name('password.update');
 
+/*创建微博，删除微博*/
+Route::resource('statuses','StatusesController',['only'=>['store','destroy']]);
+
 
 
 

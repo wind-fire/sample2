@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Status;
+use App\Policies\StatusPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -20,6 +22,8 @@ class AuthServiceProvider extends ServiceProvider
         。我们需要为用户模型 User 指定授权策略 UserPolicy*/
 
         \App\Models\User::class => \App\Policies\UserPolicy::class,
+        /*删除微博策略授权*/
+        Status::class => StatusPolicy::class,
     ];
 
     /**
